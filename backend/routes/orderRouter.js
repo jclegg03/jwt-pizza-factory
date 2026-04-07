@@ -51,6 +51,11 @@ orderRouter.endpoints = [
 ];
 
 const defaultChaos = async (req, res, next) => {
+  if (req.chaos && req.chaos.type === 'none') {
+    await new Promise((resolve) => setTimeout(resolve, orderRouter.settings.orderDelay));
+    next();
+    return;
+  }
   if (req.vendor.chaos && req.vendor.chaos.type !== 'none') {
     if (req.vendor.chaos.startDate && new Date(req.vendor.chaos.startDate) <= new Date()) {
       const reportUrl = `https://${req.hostname}/api/support/${req.apiKey}/report/${req.vendor.chaos.fixCode}`;
